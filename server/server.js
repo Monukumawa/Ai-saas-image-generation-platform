@@ -20,17 +20,14 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow mobile apps, postman, or server-to-server requests
     if (!origin) return callback(null, true);
 
-    const sanitizedOrigin = origin.trim().replace(/\/$/, ""); // Removes accidental trailing slashes
+    const sanitizedOrigin = origin.trim().replace(/\/$/, "");
 
-    // Check explicit list
     if (allowedOrigins.includes(sanitizedOrigin)) {
       return callback(null, true);
     }
 
-    // Dynamic Match: Accepts ANY Vercel preview link starting with your project name
     if (
       sanitizedOrigin.startsWith("https://ai-saas-image-generation-platform") && 
       sanitizedOrigin.endsWith(".vercel.app")
@@ -38,12 +35,12 @@ app.use(cors({
       return callback(null, true);
     }
 
-    // If it fails all checks, block it
     return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  // 🔽 UPDATE THIS LINE TO INCLUDE 'token' 🔽
+  allowedHeaders: ['Content-Type', 'Authorization', 'token'] 
 }));
 
 // 3. Connect Database
