@@ -9,31 +9,50 @@ import historyRouter from './routes/historyRoutes.js'
 const PORT = process.env.PORT || 4000
 const app = express()
 
+// 1. Core global parsers
 app.use(express.json())
 
-// --- UPDATE CORS CONFIGURATION HERE ---
+// 2. FAIL-PROOF CORS CONFIGURATION (Must be BEFORE routes!)
 const allowedOrigins = [
-  "http://localhost:5173", // Standard Vite port
-  "https://ai-saas-image-generation-platform-9y4r-7kwlrk8ts.vercel.app" //Your live Vercel frontend
-]
+  "http://localhost:5173",
+  "https://ai-saas-image-generation-platform-9y4r-7kwlrk8ts.vercel.app"
+];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, postman, or server-to-server)
+    // Allow mobile apps, postman, server-to-server requests
     if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true
-}))
-// --------------------------------------
 
+    const sanitizedOrigin = origin.trim().replace(/\/$/, ""); // Removes accidental trailing slashes
+
+    // Check explicit list
+    if (allowedOrigins.includes(sanitizedOrigin)) {
+      return callback(null, true);
+    }
+
+    // Dynamic Match: Accepts ANY Vercel preview link starting with your project name
+    if (
+      sanitizedOrigin.startsWith("https://ai-saas-image-generation-platform") && 
+      sanitizedOrigin.endsWith(".vercel.app")
+    ) {
+      return callback(null, true);
+    }
+
+    // If it fails all checks, block it
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Explicitly handle preflight options requests globally
+app.options('*', cors());
+
+// 3. Connect Database
 await connectDB()
 
+// 4. API Routes (Now fully protected by the CORS rules above)
 app.use('/api/user' , userRouter)
 app.use('/api/image' , imageRouter)
 app.use('/api/history', historyRouter)
