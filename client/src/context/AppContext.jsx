@@ -10,7 +10,7 @@ const AppContextProvider = (props)=> {
     const [showLogin,setShowLogin] = useState(false);
     const [token,setToken] = useState(localStorage.getItem('token'))
     const [credit,setCredit] = useState(false) 
-    const backendUrl = import.meta.env.VITE_BACKEND_URL
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
     console.log(backendUrl)
    const navigate = useNavigate()
     const loadCreditsData = async ()=>{
