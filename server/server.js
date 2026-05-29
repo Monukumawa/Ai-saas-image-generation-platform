@@ -9,27 +9,28 @@ import historyRouter from './routes/historyRoutes.js'
 const PORT = process.env.PORT || 4000
 const app = express()
 
-// 1. Core global parsers
+// 1. Body Parser Middleware
 app.use(express.json())
 
-// 2. FAIL-PROOF CORS CONFIGURATION (Must be BEFORE routes!)
+// 2. FAIL-PROOF CORS CONFIGURATION
 const allowedOrigins = [
   "http://localhost:5173",
   "https://ai-saas-image-generation-platform-9y4r-7kwlrk8ts.vercel.app"
 ];
 
-// ... upper code stays the same ...
-
 app.use(cors({
   origin: function (origin, callback) {
+    // Allow mobile apps, postman, or server-to-server requests
     if (!origin) return callback(null, true);
 
-    const sanitizedOrigin = origin.trim().replace(/\/$/, "");
+    const sanitizedOrigin = origin.trim().replace(/\/$/, ""); // Removes accidental trailing slashes
 
+    // Check explicit list
     if (allowedOrigins.includes(sanitizedOrigin)) {
       return callback(null, true);
     }
 
+    // Dynamic Match: Accepts ANY Vercel preview link starting with your project name
     if (
       sanitizedOrigin.startsWith("https://ai-saas-image-generation-platform") && 
       sanitizedOrigin.endsWith(".vercel.app")
@@ -37,6 +38,7 @@ app.use(cors({
       return callback(null, true);
     }
 
+    // If it fails all checks, block it
     return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
@@ -44,14 +46,10 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// ❌ REMOVE OR DELETE THIS LINE TO FIX THE CRASH:
-// app.options('*', cors()); 
-
-// Connect Database
+// 3. Connect Database
 await connectDB()
 
-// ... rest of your code ...
-// 4. API Routes (Now fully protected by the CORS rules above)
+// 4. API Routes
 app.use('/api/user' , userRouter)
 app.use('/api/image' , imageRouter)
 app.use('/api/history', historyRouter)
