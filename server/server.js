@@ -18,19 +18,18 @@ const allowedOrigins = [
   "https://ai-saas-image-generation-platform-9y4r-7kwlrk8ts.vercel.app"
 ];
 
+// ... upper code stays the same ...
+
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow mobile apps, postman, server-to-server requests
     if (!origin) return callback(null, true);
 
-    const sanitizedOrigin = origin.trim().replace(/\/$/, ""); // Removes accidental trailing slashes
+    const sanitizedOrigin = origin.trim().replace(/\/$/, "");
 
-    // Check explicit list
     if (allowedOrigins.includes(sanitizedOrigin)) {
       return callback(null, true);
     }
 
-    // Dynamic Match: Accepts ANY Vercel preview link starting with your project name
     if (
       sanitizedOrigin.startsWith("https://ai-saas-image-generation-platform") && 
       sanitizedOrigin.endsWith(".vercel.app")
@@ -38,7 +37,6 @@ app.use(cors({
       return callback(null, true);
     }
 
-    // If it fails all checks, block it
     return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
@@ -46,12 +44,13 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Explicitly handle preflight options requests globally
-app.options('*', cors());
+// ❌ REMOVE OR DELETE THIS LINE TO FIX THE CRASH:
+// app.options('*', cors()); 
 
-// 3. Connect Database
+// Connect Database
 await connectDB()
 
+// ... rest of your code ...
 // 4. API Routes (Now fully protected by the CORS rules above)
 app.use('/api/user' , userRouter)
 app.use('/api/image' , imageRouter)
