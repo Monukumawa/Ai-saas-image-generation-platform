@@ -3,9 +3,7 @@
 A full-stack AI-powered SaaS application that generates images from text prompts using modern AI APIs and the MERN stack.
 
 ---
-## Live Demo
-
-✨ [Open Imagify – AI Image Generation Platform](https://ai-saas-image-generation-platform-9.vercel.app/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Open%20Project-brightgreen?style=for-the-badge)](https://ai-saas-image-generation-platform-9.vercel.app/)
 
 ## 🚀 Features
 
