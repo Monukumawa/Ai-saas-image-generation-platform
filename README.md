@@ -3,6 +3,9 @@
 A full-stack AI-powered SaaS application that generates images from text prompts using modern AI APIs and the MERN stack.
 
 ---
+## Live Demo
+
+🚀 [Try the AI SaaS Image Generation Platform](https://ai-saas-image-generation-platform-9.vercel.app/)
 
 ## 🚀 Features
 
